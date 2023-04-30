@@ -44,7 +44,7 @@ void renderLoop(GLFWwindow* window, int width, int height)
         title = "Game - " + std::to_string((int)fps);
         glfwSetWindowTitle(window, title.c_str());
         
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClearColor(0.5f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         glfwSwapBuffers(window); 
