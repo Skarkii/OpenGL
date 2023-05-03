@@ -5,12 +5,11 @@
 #include <iostream>
 
 
-
-
 class Shader
 {
     public:
-        Shader(const GLchar vertFile,  GLchar fragFile);
+        Shader(const char* file, GLenum shaderType );
+        GLuint getId();
     private:
         GLuint id;
 };

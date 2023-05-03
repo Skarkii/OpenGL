@@ -5,6 +5,7 @@
 #include <thread>
 #include "vbo.h"
 #include "shader.h"
+#include "shaderProgram.h"
 
 
 typedef struct {
@@ -70,7 +71,17 @@ void renderLoop(GLFWwindow* window, int width, int height)
     VBO* vbo = new VBO();;
     vbo->setBufferData(vertices);
 
-    //Shader* shader = new Shader(getDataFromFile("shaders/default.vert"), getDataFromFile("shaders/default.frag"));
+    Shader* vertexShader = new Shader(getDataFromFile("shaders/default.vert"), GL_VERTEX_SHADER);
+    Shader* fragmentShader = new Shader(getDataFromFile("shaders/default.frag"), GL_FRAGMENT_SHADER);
+
+    ShaderProgram* program = new ShaderProgram();
+
+    program->attachShader(vertexShader);
+    program->attachShader(fragmentShader);
+
+    program->linkProgram();
+
+    program->setActive();
 
     while(!glfwWindowShouldClose(window)) // Render Loop
     {

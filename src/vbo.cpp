@@ -5,7 +5,7 @@
 VBO::VBO()
 {
     glGenBuffers(1, &this->id);  
-    std::cout << "VBO got ID : " << this->id << std::endl;
+    std::cout << "[VBO (" << this->id << ")] created" << std::endl;
 }
 
 
@@ -24,7 +24,7 @@ void VBO::bind()
 
 void VBO::setBufferData(float vertices[])
 {
-    /*
+/*
     GL_STREAM_DRAW: the data is set only once and used by the GPU at most a few times.
     GL_STATIC_DRAW: the data is set only once and used many times.
     GL_DYNAMIC_DRAW: the data is changed a lot and used many times.
