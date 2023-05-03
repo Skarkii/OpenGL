@@ -1,2 +1,5 @@
-build/
+build
+!build/shaders
 .vscode/
+notes.txt
+vscode.code-workspace

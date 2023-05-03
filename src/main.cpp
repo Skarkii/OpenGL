@@ -3,6 +3,9 @@
 #include "include/glad/glad.h"
 #include "include/GLFW/glfw3.h"
 #include <thread>
+#include "vbo.h"
+#include "shader.h"
+
 
 typedef struct {
     int id;
@@ -14,6 +17,30 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     glViewport(0,0,width,height); //specify area to render to
     std::cout << "Viewport changed to : [" << width << "][" << height << "]" << std::endl;
 }
+
+#include <fstream>
+const char* getDataFromFile(const char* filename)
+{
+    std::ifstream file(filename);
+
+    if(!file.is_open()){
+        std::cout << "Couldn't open file " << filename << std::endl;
+        return nullptr;
+    }
+
+    file.seekg(0, std::ios::end);
+
+    std::string buffer;
+    buffer.resize(file.tellg());
+
+    file.seekg(0, std::ios::beg);
+
+    file.read(&buffer[0], buffer.size());
+
+    file.close();
+    return buffer.c_str();
+}
+
 
 void renderLoop(GLFWwindow* window, int width, int height)
 {
@@ -33,6 +60,17 @@ void renderLoop(GLFWwindow* window, int width, int height)
     double lastFrameTime, currentFrameTime = glfwGetTime();
     double deltaTime, fps;
     std::string title = "";
+    
+    float vertices[] = {
+        -0.5f, -0.5f, 0.0f,
+        0.5f, -0.5f, 0.0f,
+        0.0f,  0.5f, 0.0f
+    };  
+
+    VBO* vbo = new VBO();;
+    vbo->setBufferData(vertices);
+
+    //Shader* shader = new Shader(getDataFromFile("shaders/default.vert"), getDataFromFile("shaders/default.frag"));
 
     while(!glfwWindowShouldClose(window)) // Render Loop
     {
@@ -141,6 +179,8 @@ int main()
         { GLFW_KEY_F12, false }
     };
     
+    
+
     // Main loop
     while (!glfwWindowShouldClose(window)) {
         processInput(window, onePerClickButtons); 
