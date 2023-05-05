@@ -7,39 +7,38 @@ ShaderProgram::ShaderProgram()
     std::cout << "[SHADER PROGRAM (" << this->id << ")] Created" << std::endl;
 }
 
-void ShaderProgram::attachShader(Shader* shader)
+ShaderProgram::~ShaderProgram()
 {
-    glAttachShader(this->id, shader->getId());
-    std::cout << "[SHADER (" << shader->getId() << ")] Attached to [SHADER PROGRAM(" << this->id << ")]" << std::endl;
+    glDeleteProgram(this->id);
 }
 
-void ShaderProgram::linkProgram()
+void ShaderProgram::AttachShader(Shader* shader)
+{
+    glAttachShader(this->id, shader->GetId());
+    std::cout << "[SHADER (" << shader->GetId() << ")] Attached to [SHADER PROGRAM(" << this->id << ")]" << std::endl;
+}
+
+void ShaderProgram::Link()
 {
     glLinkProgram(this->id);
 
     int success;
     char infoLog[512];
 
-    glGetShaderiv(this->id, GL_LINK_STATUS, &success);
-
-    if(!success)
-    {
+    glGetProgramiv(this->id, GL_LINK_STATUS, &success);
+    if (!success) {
         glGetProgramInfoLog(this->id, 512, NULL, infoLog);
-        std::cout << "[SHADER PROGRAM(" << this->id << ")] link failed, " << infoLog << std::endl;
+        std::cout << "[SHADER PROGRAM (" << this->id << ")] link failed, " << infoLog << std::endl;
+    }
+    else
+    {
+        std::cout << "[SHADER PROGRAM (" << this->id << ")] Linked" << std::endl;
     }
 
 
-    std::cout << "[SHADER PROGRAM (" << this->id << ")] Linked" << std::endl;
 }
 
-void ShaderProgram::setActive()
+void ShaderProgram::SetActive()
 {
     glUseProgram(this->id);
 }
-
-/*
-glDeleteShader(vertexShader);
-glDeleteShader(fragmentShader);  
-After link
-
-*/

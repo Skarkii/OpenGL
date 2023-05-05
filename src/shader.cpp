@@ -1,11 +1,11 @@
 #include "shader.h"
 
-Shader::Shader(const char* file, GLenum shaderType )
+Shader::Shader(const char* shaderInfo, GLenum shaderType )
 {
     this->id = glCreateShader(shaderType);
     std::cout << "[SHADER (" << this->id << ")] Created" << std::endl;
 
-    glShaderSource(this->id, 1, &file, NULL);
+    glShaderSource(this->id, 1, &shaderInfo, NULL);
     glCompileShader(this->id);
 
     int success;
@@ -24,7 +24,13 @@ Shader::Shader(const char* file, GLenum shaderType )
     }
 }
 
-GLuint Shader::getId()
+GLuint Shader::GetId()
 {
     return this->id;
+}
+
+Shader::~Shader()
+{
+    std::cout << "[SHADER (" << this->id << ")] Removed" << std::endl;
+    glDeleteShader(this->id);
 }

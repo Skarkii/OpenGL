@@ -35,10 +35,13 @@ class VBO
         * @param 
         * @return 
         */
-        void bind();
+        void Bind();
 
+        void Unbind();
 
-        void setBufferData(float vertices[]);
+        GLuint GetId();
+
+        void SetBufferData(float* vertices, size_t size);
 
     private:
         GLuint id;

@@ -10,9 +10,10 @@ class ShaderProgram
 {
     public:
         ShaderProgram();
-        void attachShader(Shader* shader);
-        void linkProgram();
-        void setActive();
+        ~ShaderProgram();
+        void AttachShader(Shader* shader);
+        void Link();
+        void SetActive();
     private:
         GLuint id;
 };
