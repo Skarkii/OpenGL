@@ -8,9 +8,20 @@
 #include "shader.h"
 #include "shaderProgram.h"
 
+#include <mutex>
+std::mutex mtx;
+float r = 0.5f;
+
 void framebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
-    glViewport(0,0,width,height); //specify area to render to
+    mtx.lock();
+    glfwMakeContextCurrent(window);
+
+    glViewport(0,0,width,height);//specify area to render to
+    glfwMakeContextCurrent(NULL);
+
+    mtx.unlock();
+
     std::cout << "Viewport changed to : [" << width << "][" << height << "]" << std::endl;
 }
 
@@ -41,7 +52,9 @@ const char* getDataFromFile(const char* filename)
 void renderLoop(GLFWwindow* window, int width, int height)
 {
     //Init GLAD
-    glfwMakeContextCurrent(window); //Required to init GLAD
+    //Required to init GLAD
+    mtx.lock();
+    glfwMakeContextCurrent(window);
 
     if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
@@ -49,8 +62,6 @@ void renderLoop(GLFWwindow* window, int width, int height)
         glfwSetWindowShouldClose(window, true);
         return;
     }
-    glViewport(0,0,width,height); // Set default viewport
-    glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 
     double lastFrameTime, currentFrameTime = glfwGetTime();
     double deltaTime, fps;
@@ -89,9 +100,9 @@ void renderLoop(GLFWwindow* window, int width, int height)
     vbo.Unbind();
     vao.Unbind();
 
+    glfwMakeContextCurrent(NULL);
+    mtx.unlock();
 
-
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     while(!glfwWindowShouldClose(window)) // Render Loop
     {
@@ -103,7 +114,10 @@ void renderLoop(GLFWwindow* window, int width, int height)
         title = "Game - " + std::to_string((int)fps);
         glfwSetWindowTitle(window, title.c_str());
         
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        mtx.lock();
+        glfwMakeContextCurrent(window);
+        //std::cout << "A" << std::endl;
+        glClearColor(r, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         program.SetActive();
@@ -113,6 +127,8 @@ void renderLoop(GLFWwindow* window, int width, int height)
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
         glfwSwapBuffers(window);
+        glfwMakeContextCurrent(NULL);
+        mtx.unlock();
     }
 }
 
@@ -151,22 +167,53 @@ void processInput(GLFWwindow* window, ButtonState* onePerClickButtons)
     if(glfwGetKey(window, onePerClickButtons[0].id) == GLFW_PRESS && !onePerClickButtons[0].isPressed)
     {
         onePerClickButtons[0].isPressed = true;
+
         toggleFullscreen(window);
     }
-    else if(glfwGetKey(window, GLFW_KEY_F11)  == GLFW_RELEASE && onePerClickButtons[0].isPressed)
+    else if(glfwGetKey(window, onePerClickButtons[0].id)  == GLFW_RELEASE && onePerClickButtons[0].isPressed)
     {
         onePerClickButtons[0].isPressed = false;
+    }
+
+    if(glfwGetKey(window, onePerClickButtons[1].id) == GLFW_PRESS && !onePerClickButtons[1].isPressed)
+    {
+        onePerClickButtons[1].isPressed = true;
+
+        mtx.lock();
+        glfwMakeContextCurrent(window);
+
+        GLint polygonMode;
+        glGetIntegerv(GL_POLYGON_MODE, &polygonMode);
+
+        if(polygonMode == GL_LINE)
+        {
+            std::cout << "Polygon mode: FILL" << std::endl;
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        }
+        else
+        {
+            std::cout << "Polygon mode: LINE" << std::endl;
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        }
+
+        glfwMakeContextCurrent(NULL);
+        mtx.unlock();
+        
+    }
+    else if(glfwGetKey(window, onePerClickButtons[1].id)  == GLFW_RELEASE && onePerClickButtons[1].isPressed)
+    {
+        onePerClickButtons[1].isPressed = false;
     }
 
 
     if(glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
     {
-        
+        r-=0.00001;
     }
 
     if(glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
     {
-        
+        r+=0.00001;
     }
 
     if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
@@ -203,6 +250,8 @@ int main()
         glfwTerminate();
         return -1;
     }
+
+    glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 
     std::thread renderThread(renderLoop, window, width, height); //Create render loop
 
