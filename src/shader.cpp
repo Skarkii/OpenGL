@@ -1,17 +1,41 @@
 #include "shader.h"
 
-Shader::Shader(const char* shaderInfo, GLenum shaderType )
+const char* Shader::GetDataFromFile(const char* filename)
+{
+    std::ifstream file(filename);
+
+    if(!file.is_open()){
+        std::cout << "Couldn't open file " << filename << std::endl;
+        return nullptr;
+    }
+
+    file.seekg(0, std::ios::end);
+
+    std::string buffer;
+    buffer.resize(file.tellg());
+
+    file.seekg(0, std::ios::beg);
+
+    file.read(&buffer[0], buffer.size());
+
+    file.close();
+    return buffer.c_str();
+}
+
+
+Shader::Shader(const char* filePath, GLenum shaderType )
 {
     this->id = glCreateShader(shaderType);
     std::cout << "[SHADER (" << this->id << ")] Created" << std::endl;
-
-    glShaderSource(this->id, 1, &shaderInfo, NULL);
+    const char* data = this->GetDataFromFile(filePath);
+    glShaderSource(this->id, 1, &data, NULL);
     glCompileShader(this->id);
 
     int success;
     char infoLog[512];
 
     glGetShaderiv(this->id, GL_COMPILE_STATUS, &success);
+
 
     if(!success)
     {

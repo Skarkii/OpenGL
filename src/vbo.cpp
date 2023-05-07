@@ -41,6 +41,8 @@ void VBO::SetBufferData(float* vertices, size_t size)
     GL_DYNAMIC_DRAW: the data is changed a lot and used many times.
 */
     this->Bind();
+
     glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
 
+    // this->Unbind();
 }

@@ -2,6 +2,7 @@
 #define VAO_H
 
 #include "include/glad/glad.h"
+#include "include/GLFW/glfw3.h"
 #include "vbo.h"
 #include <iostream>
 
