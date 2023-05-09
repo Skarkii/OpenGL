@@ -13,7 +13,7 @@ class VAO
         ~VAO();
         void Bind();
         void Unbind();
-        void LinkVBO(VBO& vbo);
+        void LinkVBO(VBO& vbo, GLuint layout, GLuint numComponents, GLenum type, GLsizeiptr stride, void* offset);
     private:
         GLuint id;
 };

@@ -1,7 +1,10 @@
 #version 330 core
 out vec4 FragColor;
+   
+//Recieves from vertex shader
+in vec3 color;
 
 void main()
 {
-    FragColor = vec4(0.9f, 0.5f, 0.4f, 1.0f);
+    FragColor = vec4(abs(color.x), abs(color.y), abs(color.z), 1.0f);
 }

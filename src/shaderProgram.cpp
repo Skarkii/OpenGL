@@ -1,5 +1,15 @@
 #include "shaderProgram.h"
 
+GLuint ShaderProgram::GetId()
+{
+    return this->id;
+}
+
+void ShaderProgram::SetFloat(const GLchar* uniform, float value)
+{
+    this->SetActive();
+    glUniform1f(glGetUniformLocation(this->id, uniform), value);
+}
 
 ShaderProgram::ShaderProgram()
 {

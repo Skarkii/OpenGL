@@ -12,6 +12,7 @@
 
 #include <iostream>
 #include <mutex>
+#include <math.h>
 
 class Render
 {

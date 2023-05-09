@@ -41,15 +41,16 @@ void Render::Loop()
     float base = 0.5f;
 
     float vertices[] = {
-        -base, -base, 0.0f,
-        -base, base, 0.0f,
-        base, -base, 0.0f,
-        base, base, 0.0f
+    //    X       Y      Z       R       G       B
+        -base,  base,  0.0f,   0.0f,   1.0f,   0.0f, 
+        -base,  -base,   0.0f,   1.0f,   0.0f,   0.0f,
+        base,   -base,  0.0f,   1.0f,   0.0f,   0.0f,
+        base,   base,   0.0f,   0.0f,   1.0f,   0.0f
     };
     
     unsigned int indices[] = {  
     0, 1, 2,   // first triangle
-    1, 2, 3    // second triangle
+    0, 2, 3    // second triangle
     };
 
     Shader* vertex = new Shader("shaders/default.vert", GL_VERTEX_SHADER);
@@ -62,22 +63,33 @@ void Render::Loop()
 
     program.Link();
 
-    VBO vbo;
+    program.SetFloat("scale", 1.0f);
+
+    /*program.SetActive();
+    GLuint uniID = glGetUniformLocation(program.GetId(), "scale");
+    glUniform1f(uniID, 1);*/
+
+    VBO vbo(vertices, sizeof(vertices));
+    EBO ebo(indices, sizeof(indices));
     VAO vao;
-    EBO ebo;
 
-
-    vbo.SetBufferData(vertices, sizeof(vertices));
-
-    ebo.SetBufferData(indices, sizeof(indices));
-
-    vao.LinkVBO(vbo);
+    vao.LinkVBO(vbo, 0, 3, GL_FLOAT, 6 * sizeof(float), (void*)0);
+    vao.LinkVBO(vbo, 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(GL_FLOAT)));
 
     this->mtx->unlock();
-
+    double lastFrameTime, currentFrameTime = glfwGetTime();
+    double deltaTime, fps;
+    std::string title = "";
 
     while(!glfwWindowShouldClose(this->window))
     {
+        currentFrameTime = glfwGetTime();
+        deltaTime = currentFrameTime - lastFrameTime;
+        lastFrameTime = currentFrameTime;
+        fps = 1.0 / deltaTime;
+        title = "Game - " + std::to_string((int)fps);
+        glfwSetWindowTitle(this->window, title.c_str());
+
         this->mtx->lock();
         glfwMakeContextCurrent(this->window);
 
@@ -85,7 +97,8 @@ void Render::Loop()
         glClear(GL_COLOR_BUFFER_BIT);
 
         program.SetActive();
-
+//        program.SetFloat("scale", 2 * sin(glfwGetTime()));        
+        program.SetFloat("offset", 0.5f);
         vao.Bind();
 
         ebo.Bind();

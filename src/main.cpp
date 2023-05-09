@@ -22,23 +22,23 @@ int main()
     const std::string title = "Title";
 
     render.Init(width, height, title, &mtx);
-
+    
     if(render.GetWindowPtr() == nullptr)
     {
-        std::cout << "Failed to initialize Renderclass" << std::endl;
+        std::cout << "Failed to initialize Renderer" << std::endl;
         system("pause");
         return -1;
     }
 
     if((inputHandler.Init(&render, &mtx)) == false)
     {
-        std::cout << "Failed to initialize inputHandler" << std::endl;
+        std::cout << "Failed to initialize Input Handler" << std::endl;
         system("pause");
+        glfwTerminate();
         return -1;
     }
 
     std::thread renderThread(&Render::Loop, &render); //Create render loop
-
 
     while(!glfwWindowShouldClose(render.GetWindowPtr()))
     {

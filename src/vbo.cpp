@@ -8,6 +8,12 @@ VBO::VBO()
     std::cout << "[VBO (" << this->id << ")] created" << std::endl;
 }
 
+VBO::VBO(float* vertices, size_t size)
+{
+    glGenBuffers(1, &this->id);  
+    this->SetBufferData(vertices, size);
+}
+
 
 VBO::~VBO()
 {
@@ -23,8 +29,6 @@ void VBO::Unbind()
 {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
-
-
 
 void VBO::Bind()
 {

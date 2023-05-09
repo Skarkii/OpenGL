@@ -8,6 +8,7 @@ class EBO
 {
     public:
         EBO();
+        EBO(unsigned int* indices, size_t size);
         ~EBO();
         void Bind();
         void Unbind();

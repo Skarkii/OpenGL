@@ -21,6 +21,9 @@ class VBO
          */
         VBO();
 
+        VBO(float* vertices, size_t size);
+
+
         /**
          * @brief Default deconstructor.
          * 

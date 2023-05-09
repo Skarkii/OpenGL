@@ -13,7 +13,9 @@ class ShaderProgram
         ~ShaderProgram();
         void AttachShader(Shader* shader);
         void Link();
+        GLuint GetId();
         void SetActive();
+        void SetFloat(const GLchar* uniform, float value);
     private:
         GLuint id;
 };

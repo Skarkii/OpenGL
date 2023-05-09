@@ -65,16 +65,14 @@ bool InputHandler::Init(Render* render, std::mutex* _mtx)
 {
     this->window = render->GetWindowPtr();
 
-    if(window == nullptr) { return false; }
-
-    this->window = window;
+    if(this->window == nullptr) { return false; }
 
     this->mtx = _mtx;
 
     if(this->mtx == nullptr) { return false; }
 
-    this->BindOneClickKey(GLFW_KEY_F11, [this]{ this->EventToggleFullscreen(); });
     this->BindOneClickKey(GLFW_KEY_F10, [this]{ this->render->test(); });
+    this->BindOneClickKey(GLFW_KEY_F11, [this]{ this->EventToggleFullscreen(); });
     this->BindOneClickKey(GLFW_KEY_F12, [this]{ this->EventToggleWireframe(); });
 
     this->BindHoldKey(GLFW_KEY_ESCAPE, [this]{this->EventExitApplication(); });
