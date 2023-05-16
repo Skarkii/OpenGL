@@ -23,7 +23,7 @@ int main()
 
     const int width = 1280;
     const int height = 720;
-    const std::string title = "Title";
+    const std::string title = "Cool Title";
 
     render.Init(width, height, title, &mtx);
     
