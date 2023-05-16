@@ -21,6 +21,11 @@ Render::~Render()
     
 }
 
+void Render::UpdateCameraPosition(glm::vec3 add)
+{
+    this->cameraPosition = this->cameraPosition + (this->cameraSpeed * add);
+}
+
 
 void Render::Loop()
 {
@@ -36,21 +41,30 @@ void Render::Loop()
         glfwSetWindowShouldClose(this->window, true);
         return;
     }
-        GL_CHECK();
-
+    
     float base = 0.5f;
 
     float vertices[] = {
-    //    X       Y      Z       R       G       B
-        -base,  base,  0.0f,   0.0f,   1.0f,   0.0f, 
-        -base,  -base,   0.0f,   1.0f,   0.0f,   0.0f,
-        base,   -base,  0.0f,   1.0f,   0.0f,   0.0f,
-        base,   base,   0.0f,   0.0f,   1.0f,   0.0f
+    //    X       Y      Z       R       G       B       IX      IY
+          base,   base,  base,   0.0f,   1.0f,   0.0f,   0.0f,   0.5f,      // Right Top  Back
+          -base,   base,  base,   1.0f,   0.0f,   0.0f,   0.0f,   0.0f,     // Left Top  Back
+          -base,   base,  -base,   1.0f,   0.0f,   0.0f,   0.5f,   1.0f,     // Left  Top  Front
+          base,   base,  -base,   0.0f,   1.0f,   0.0f,   1.0f,   0.5f,    // Right  Top  Front
+
+          base,   -base,  base,   0.0f,   1.0f,   0.0f,   1.0f,   0.5f,     // Right Bot Back
+          -base,   -base,  base,   1.0f,   0.0f,   0.0f,   1.0f,   1.0f,    // Left Bot Back
+        -base,   -base,  -base,   0.0f,   1.0f,   0.0f,   0.5f,   0.5f,    // Left Bot Front
+          base,   -base,  -base,   1.0f,   0.0f,   0.0f,   0.5f,   0.5f  //  Right Bot Front
+
     };
     
     unsigned int indices[] = {  
-    0, 1, 2,   // first triangle
-    0, 2, 3    // second triangle
+        0, 1, 3, 3, 2, 1,   //Top
+        4, 5, 7, 7, 6, 5,   //Bottom
+        0, 1, 5, 5, 4, 0,   //Back 
+        0, 3, 4, 4, 7, 3,   //Right
+        1, 2, 5, 5, 6, 2,   //Left
+        2, 3, 6, 6, 7, 3    //Front
     };
 
     Shader* vertex = new Shader("shaders/default.vert", GL_VERTEX_SHADER);
@@ -63,48 +77,144 @@ void Render::Loop()
 
     program.Link();
 
-    program.SetFloat("scale", 1.0f);
+    Texture face;
+    face.GenerateTexture("images/face.png");
 
-    /*program.SetActive();
-    GLuint uniID = glGetUniformLocation(program.GetId(), "scale");
-    glUniform1f(uniID, 1);*/
+    Texture lucas;
+    lucas.GenerateTexture("images/lucas.png");
+
+    Texture sinan;
+    sinan.GenerateTexture("images/sinan.png");
+
+    program.SetActive();
+
+    //program.SetInt("backTexture", lucas.GetId());
+    program.SetInt("backTexture", 0);
+    program.SetInt("frontTexture", 1);
 
     VBO vbo(vertices, sizeof(vertices));
     EBO ebo(indices, sizeof(indices));
     VAO vao;
 
-    vao.LinkVBO(vbo, 0, 3, GL_FLOAT, 6 * sizeof(float), (void*)0);
-    vao.LinkVBO(vbo, 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(GL_FLOAT)));
+    vao.LinkVBO(vbo, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
+    vao.LinkVBO(vbo, 1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(GL_FLOAT)));
+    vao.LinkVBO(vbo, 2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(GL_FLOAT)));
+
+    float rotation = 0.0f;
 
     this->mtx->unlock();
     double lastFrameTime, currentFrameTime = glfwGetTime();
     double deltaTime, fps;
     std::string title = "";
 
+    glEnable(GL_DEPTH_TEST);
+
+
+    glm::mat4 proj = glm::mat4(1.0f);
+
+    float fov = 60.0f;
+    proj = glm::perspective(glm::radians(fov), 16.0f/9.0f, 0.1f, 100.0f);
+
     while(!glfwWindowShouldClose(this->window))
     {
+        //std::cout << this->cameraPosition.x << " | " << this->cameraPosition.y << " | " << this->cameraPosition.z << std::endl;
         currentFrameTime = glfwGetTime();
         deltaTime = currentFrameTime - lastFrameTime;
         lastFrameTime = currentFrameTime;
         fps = 1.0 / deltaTime;
-        title = "Game - " + std::to_string((int)fps);
+        
+        title = "Game - " + std::to_string((int)fps) + 
+        " | " + std::to_string(this->cameraPosition.x) + 
+        " | " + std::to_string(this->cameraPosition.y) +
+         " | " + std::to_string(this->cameraPosition.z);
+
         glfwSetWindowTitle(this->window, title.c_str());
 
         this->mtx->lock();
         glfwMakeContextCurrent(this->window);
 
         glClearColor(0.5f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         program.SetActive();
-//        program.SetFloat("scale", 2 * sin(glfwGetTime()));        
-        program.SetFloat("offset", 0.5f);
+        //program.SetFloat("scale", 1 * fabs(sin(glfwGetTime())));   
+
+
+        if(deltaTime >= 1 / 60)
+        {
+            rotation += 0.5f;
+        }
+
+        glm::mat4 model = glm::mat4(1.0f);
+        glm::mat4 view = glm::mat4(1.0f);
+
+
+        //model = glm::rotate(model, glm::radians(rotation), glm::vec3(1.0f, 1.0f, 1.0f));
+        // DET DU LÄGGER I DEN ÄR DET SOM HÄNDER MED OBJEKTET
+
+        //view = view * this->cameraPosition;
+        //view = glm::translate(view, this->cameraPosition);
+        view = glm::lookAt(this->cameraPosition, this->cameraPosition + glm::vec3(0.0f,0.0f,1.0f), glm::vec3(0.0f,1.0f,0.0f));
+        // view = glm::rotate(view, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        // view = glm::rotate(view, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 1.0f));
+        //view = glm::translate(view, glm::vec3(0,0,-10));
+        //view = glm::translate(view, glm::vec3(1 * cos(glfwGetTime()), 1 * sin(glfwGetTime()), -5.0f));
+        // TYP KAMERANS VIEWSPACE EN MATRIS SOM VART IFRÅN DU TITTAR IFRÅN
+
+
+        model = glm::rotate(model, glm::radians(360.0f * (float)sin(glfwGetTime())), glm::vec3(0.5f, 0.5f, 0.5f));
+        model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
+
+        program.SetVec4("view", view);
+        program.SetVec4("proj", proj);
+        program.SetVec4("model", model);
+
+
+
+
         vao.Bind();
 
         ebo.Bind();
 
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0);
-        //glDrawArrays(GL_TRIANGLES, 0, 3);
+        glActiveTexture(GL_TEXTURE0);
+
+        if(sin(glfwGetTime()) > 0)
+        {
+            sinan.Bind();
+        }
+        else
+        {
+            lucas.Bind();
+        }
+
+        glActiveTexture(GL_TEXTURE0 + 1);
+        face.Bind();
+
+       // glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+        glActiveTexture(GL_TEXTURE0);
+        model = glm::mat4(1.0f);
+        lucas.Bind();
+        
+
+        program.SetVec4("view", view);
+        program.SetVec4("proj", proj);
+        program.SetVec4("model", model);
+        for (int i = 0; i < 20; i++)
+        {
+            for (int j = 0; j < 20; j++)
+            {
+                for (int k = 0; k < 20; k++)
+                {
+                    model = glm::mat4(1.0f);
+                    model = glm::translate(model, glm::vec3(i, k, j));
+                    program.SetVec4("model", model);
+                    glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+                }
+                
+            }
+        }
+        
+
 
         vao.Unbind();
 
@@ -185,4 +295,6 @@ void Render::Init(int width, int height, std::string title, std::mutex* _mtx)
 
     return;
 }
+
+
 

@@ -11,6 +11,10 @@
 #include "render.h"
 #include "inputhandler.h"
 
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "include/stb_image/stb_image.h"
+
 int main()
 {
     Render render;
@@ -37,6 +41,7 @@ int main()
         glfwTerminate();
         return -1;
     }
+    
 
     std::thread renderThread(&Render::Loop, &render); //Create render loop
 

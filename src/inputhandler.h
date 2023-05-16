@@ -27,6 +27,9 @@ class InputHandler
         void EventExitApplication();
         void EventToggleWireframe();
 
+        float deltaTime = 0.0f;
+        float lastFrame = 0.0f;
+
         std::map<int, std::pair<KeyCallback, bool>> OneClickKeyBindings;
         std::map<int, KeyCallback> HoldKeyBindings;
 };

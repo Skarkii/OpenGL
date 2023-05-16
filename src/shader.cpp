@@ -1,33 +1,31 @@
 #include "shader.h"
 
-const char* Shader::GetDataFromFile(const char* filename)
+const GLchar* GetDataFromFile(const char* filename)
 {
     std::ifstream file(filename);
-
-    if(!file.is_open()){
+    if (!file.is_open()) {
         std::cout << "Couldn't open file " << filename << std::endl;
         return nullptr;
     }
 
-    file.seekg(0, std::ios::end);
-
-    std::string buffer;
-    buffer.resize(file.tellg());
-
-    file.seekg(0, std::ios::beg);
-
-    file.read(&buffer[0], buffer.size());
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    std::string content = buffer.str();
 
     file.close();
-    return buffer.c_str();
-}
 
+    char* data = new char[content.size() + 1];
+    std::copy(content.begin(), content.end(), data);
+    data[content.size()] = '\0';
+
+    return data;
+}
 
 Shader::Shader(const char* filePath, GLenum shaderType )
 {
     this->id = glCreateShader(shaderType);
     std::cout << "[SHADER (" << this->id << ")] Created" << std::endl;
-    const char* data = this->GetDataFromFile(filePath);
+    const char* data = GetDataFromFile(filePath);
     glShaderSource(this->id, 1, &data, NULL);
     glCompileShader(this->id);
 
@@ -35,6 +33,8 @@ Shader::Shader(const char* filePath, GLenum shaderType )
     char infoLog[512];
 
     glGetShaderiv(this->id, GL_COMPILE_STATUS, &success);
+
+    std::cout << data << std::endl;
 
 
     if(!success)

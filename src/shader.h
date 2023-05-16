@@ -3,8 +3,11 @@
 
 #include "include/glad/glad.h"
 #include <fstream>
+#include <sstream>
 #include <iostream>
 
+
+const GLchar* GetDataFromFile(const char* filePath);
 
 class Shader
 {
@@ -14,9 +17,5 @@ class Shader
         GLuint GetId();
     private:
         GLuint id;
-        const GLchar* GetDataFromFile(const char* filePath);
 };
-
-
-
 #endif // SHADER_H

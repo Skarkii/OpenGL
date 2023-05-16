@@ -5,12 +5,6 @@ GLuint ShaderProgram::GetId()
     return this->id;
 }
 
-void ShaderProgram::SetFloat(const GLchar* uniform, float value)
-{
-    this->SetActive();
-    glUniform1f(glGetUniformLocation(this->id, uniform), value);
-}
-
 ShaderProgram::ShaderProgram()
 {
     this->id = glCreateProgram();
@@ -51,4 +45,22 @@ void ShaderProgram::Link()
 void ShaderProgram::SetActive()
 {
     glUseProgram(this->id);
+}
+
+void ShaderProgram::SetFloat(const GLchar* uniform, float value)
+{
+    this->SetActive();
+    glUniform1f(glGetUniformLocation(this->id, uniform), value);
+}
+
+void ShaderProgram::SetInt(const GLchar* uniform, int value)
+{
+    this->SetActive();
+    glUniform1i(glGetUniformLocation(this->id, uniform), value);
+}
+
+void ShaderProgram::SetVec4(const GLchar* uniform, glm::mat4 vector)
+{
+    this->SetActive();
+    glUniformMatrix4fv(glGetUniformLocation(this->id, uniform), 1, GL_FALSE, glm::value_ptr(vector));
 }

@@ -63,6 +63,8 @@ void InputHandler::EventToggleWireframe()
 
 bool InputHandler::Init(Render* render, std::mutex* _mtx)
 {
+    this->render = render;
+
     this->window = render->GetWindowPtr();
 
     if(this->window == nullptr) { return false; }
@@ -71,17 +73,26 @@ bool InputHandler::Init(Render* render, std::mutex* _mtx)
 
     if(this->mtx == nullptr) { return false; }
 
-    this->BindOneClickKey(GLFW_KEY_F10, [this]{ this->render->test(); });
+    this->BindOneClickKey(GLFW_KEY_F9, [this]{ this->render->test(); });
     this->BindOneClickKey(GLFW_KEY_F11, [this]{ this->EventToggleFullscreen(); });
-    this->BindOneClickKey(GLFW_KEY_F12, [this]{ this->EventToggleWireframe(); });
+    this->BindOneClickKey(GLFW_KEY_F10, [this]{ this->EventToggleWireframe(); });
 
     this->BindHoldKey(GLFW_KEY_ESCAPE, [this]{this->EventExitApplication(); });
 
+    this->BindHoldKey(GLFW_KEY_SPACE, [this] { this->render->UpdateCameraPosition(      glm::vec3(0.0f, this->deltaTime ,0.0f));  });
+    this->BindHoldKey(GLFW_KEY_LEFT_SHIFT, [this] { this->render->UpdateCameraPosition( glm::vec3(0.0f, -this->deltaTime ,0.0f)); });
+    this->BindHoldKey(GLFW_KEY_S,     [this] { this->render->UpdateCameraPosition(      glm::vec3(0.0f, 0.0f, -this->deltaTime));  });
+    this->BindHoldKey(GLFW_KEY_W,     [this] { this->render->UpdateCameraPosition(      glm::vec3(0.0f, 0.0f, this->deltaTime));  });
+    this->BindHoldKey(GLFW_KEY_A,     [this] { this->render->UpdateCameraPosition(      glm::vec3(-this->deltaTime, 0.0f ,0.0f));  });
+    this->BindHoldKey(GLFW_KEY_D,     [this] { this->render->UpdateCameraPosition(      glm::vec3(this->deltaTime, 0.0f ,0.0f));  });
     return true;
 }
 
 void InputHandler::ProcessInputs()
 {
+    this->deltaTime = glfwGetTime() - this->lastFrame;
+    this->lastFrame = glfwGetTime();
+
     for (auto it = this->HoldKeyBindings.begin(); it != this->HoldKeyBindings.end(); ++it) {
         if(glfwGetKey(this->window, it->first) == GLFW_PRESS)
         {
