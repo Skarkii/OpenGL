@@ -26,7 +26,7 @@ Install glad headers from https://glad.dav1d.de with the following options:
 
 Make sure Generate a loader is ticked.
 
-Extract the **include** folder into **/src** and move **/src/glad.c** in the the **/src/include/glad** folder.
+Extract the **include** folder into **/src** and move **/src/glad.c** from the zip to the **/src/include/glad** folder.
 Also change row 25 in file **glad.c**
 ```c++
 #include <glad/glad.h>
@@ -44,4 +44,23 @@ Put this header file into **src/include/stb_image/**
 #### GLM
 Install glm from https://github.com/g-truc/glm/tags
 
-Extract the foler **glm** into **/src/include/**
+Extract the folder **/glm/glm** from the zip into **/src/include/**
+
+## Cmake
+Change rows 2 and 3 in **/src/CMakeLists.txt** to match your compiler.
+
+#Only a guide for MinGW will be provided:
+
+Navigate to the root directory of the repository.
+
+Run the commands:
+```bash
+cmake -B build/ -S src/ -G "MinGW Makefiles"
+```
+Finally to generate the executable run:
+```bash
+cmake --build build
+```
+And now a runnable file OpenGL.exe should have been created as **/build/OpenGL.exe**
+
+

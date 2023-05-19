@@ -1,7 +1,6 @@
 build/*
 !build/shaders
 .vscode/
-notes.txt
 vscode.code-workspace
 src/include/glad/**
 src/include/GLFW/**
@@ -9,3 +8,4 @@ src/include/glm/**
 src/include/KHR/**
 src/include/stb_image/**
 src/lib/**
+temp/**
