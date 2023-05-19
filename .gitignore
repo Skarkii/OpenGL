@@ -3,9 +3,9 @@ build/*
 .vscode/
 notes.txt
 vscode.code-workspace
-include/glad/*
-include/GLFW/*
-include/glm/*
-include/KHR/*
-include/stb_image/*
-include/lib/*
+src/include/glad/**
+src/include/GLFW/**
+src/include/glm/**
+src/include/KHR/**
+src/include/stb_image/**
+src/lib/**
