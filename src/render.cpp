@@ -26,7 +26,6 @@ void Render::UpdateCameraPosition(glm::vec3 add)
     this->cameraPosition = this->cameraPosition + (this->cameraSpeed * add);
 }
 
-
 void Render::Loop()
 {
     this->mtx->lock();
@@ -62,7 +61,7 @@ void Render::Loop()
         0, 1, 3, 3, 2, 1,   //Top
         4, 5, 7, 7, 6, 5,   //Bottom
         0, 1, 5, 5, 4, 0,   //Back 
-        0, 3, 4, 4, 7, 3,   //Right
+        0, 3, 4, 4, 7, 3,   //Right 
         1, 2, 5, 5, 6, 2,   //Left
         2, 3, 6, 6, 7, 3    //Front
     };
@@ -238,7 +237,7 @@ void Render::FramebufferSizeCallback(GLFWwindow* window, int width, int height)
 
     this->mtx->unlock();
 }
-
+    
 GLFWwindow* Render::GetWindowPtr()
 {
     return this->window;

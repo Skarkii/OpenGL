@@ -2,7 +2,7 @@
 #define VBO_H
 
 #include "include/glad/glad.h"
-
+#include <iostream>
 
 /**
  * @brief Represents a Vertex Buffer Object

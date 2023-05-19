@@ -21,6 +21,7 @@ ADD_LIBRARY(Module
     texture.cpp
     vao.cpp
     vbo.cpp
+    mesh.cpp
 )
 
 
@@ -43,6 +44,7 @@ ADD_EXECUTABLE(OpenGL
     texture.cpp
     vao.cpp
     vbo.cpp
+    mesh.cpp
 )
 
 target_link_libraries(OpenGL Module)

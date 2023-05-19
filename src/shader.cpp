@@ -34,7 +34,7 @@ Shader::Shader(const char* filePath, GLenum shaderType )
 
     glGetShaderiv(this->id, GL_COMPILE_STATUS, &success);
 
-    std::cout << data << std::endl;
+    // std::cout << data << std::endl;
 
 
     if(!success)

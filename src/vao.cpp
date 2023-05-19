@@ -6,7 +6,6 @@ VAO::VAO()
     std::cout << "[VAO (" << this->id << ")] created" << std::endl;
 }
 
-
 VAO::~VAO()
 {
     glDeleteVertexArrays(1, &this->id);
@@ -19,7 +18,6 @@ void VAO::LinkVBO(VBO& vbo, GLuint layout, GLuint numComponents, GLenum type, GL
 
     glVertexAttribPointer(layout, numComponents, type, GL_FALSE, stride, offset);
     glEnableVertexAttribArray(layout);
-
 }
 
 
