@@ -27,6 +27,14 @@ Install glad headers from https://glad.dav1d.de with the following options:
 Make sure Generate a loader is ticked.
 
 Extract the **include** folder into **/src** and move **/src/glad.c** in the the **/src/include/glad** folder.
+Also change row 25 in file **glad.c**
+```c++
+#include <glad/glad.h>
+```
+to
+```c++
+#include "glad.h"
+```
 
 #### stb image
 Install stb_image.h from https://github.com/nothings/stb/blob/master/stb_image.h
