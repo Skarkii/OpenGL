@@ -49,7 +49,7 @@ Extract the folder **/glm/glm** from the zip into **/src/include/**
 ## Cmake
 Change rows 2 and 3 in **/src/CMakeLists.txt** to match your compiler.
 
-#Only a guide for MinGW will be provided:
+# Only a guide for MinGW will be provided:
 
 Navigate to the root directory of the repository.
 
