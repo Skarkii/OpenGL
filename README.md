@@ -47,7 +47,11 @@ Install glm from https://github.com/g-truc/glm/tags
 Extract the folder **/glm/glm** from the zip into **/src/include/**
 
 ## Cmake
-Change rows 2 and 3 in **/src/CMakeLists.txt** to match your compiler.
+Change rows 2 and 3 in **/src/CMakeLists.txt** to match your compiler paths.
+```cmake
+set( CMAKE_CXX_COMPILER "C:/msys64/mingw64/bin/g++.exe" )
+set( CMAKE_C_COMPILER "C:/msys64/mingw64/bin/gcc.exe" )
+```
 
 #### Only a guide for MinGW will be provided:
 
